@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lstm.well.mapper.WellInfoMapper">
+    
+    <resultMap type="WellInfo" id="WellInfoResult">
+        <result property="id"    column="id"    />
+        <result property="wellId"    column="well_id"    />
+        <result property="date"    column="date"    />
+        <result property="waterCutSc"    column="water_cut_sc"    />
+        <result property="oilCutSc"    column="oil_cut_sc"    />
+        <result property="cumulativeOilSc"    column="cumulative_oil_sc"    />
+    </resultMap>
+
+    <sql id="selectWellInfoVo">
+        select id, well_id, date, water_cut_sc, oil_cut_sc, cumulative_oil_sc from well_info
+    </sql>
+
+    <select id="selectWellInfoList" parameterType="WellInfo" resultMap="WellInfoResult">
+        <include refid="selectWellInfoVo"/>
+        <where>  
+            <if test="wellId != null  and wellId != ''"> and well_id = #{wellId}</if>
+            <if test="date != null  and date != ''"> and date = #{date}</if>
+        </where>
+    </select>
+    
+    <select id="selectWellInfoById" parameterType="Long" resultMap="WellInfoResult">
+        <include refid="selectWellInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertWellInfo" parameterType="WellInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into well_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wellId != null and wellId != ''">well_id,</if>
+            <if test="date != null and date != ''">date,</if>
+            <if test="waterCutSc != null">water_cut_sc,</if>
+            <if test="oilCutSc != null">oil_cut_sc,</if>
+            <if test="cumulativeOilSc != null">cumulative_oil_sc,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wellId != null and wellId != ''">#{wellId},</if>
+            <if test="date != null and date != ''">#{date},</if>
+            <if test="waterCutSc != null">#{waterCutSc},</if>
+            <if test="oilCutSc != null">#{oilCutSc},</if>
+            <if test="cumulativeOilSc != null">#{cumulativeOilSc},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWellInfo" parameterType="WellInfo">
+        update well_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wellId != null and wellId != ''">well_id = #{wellId},</if>
+            <if test="date != null and date != ''">date = #{date},</if>
+            <if test="waterCutSc != null">water_cut_sc = #{waterCutSc},</if>
+            <if test="oilCutSc != null">oil_cut_sc = #{oilCutSc},</if>
+            <if test="cumulativeOilSc != null">cumulative_oil_sc = #{cumulativeOilSc},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWellInfoById" parameterType="Long">
+        delete from well_info where id = #{id}
+    </delete>
+
+    <delete id="deleteWellInfoByIds" parameterType="String">
+        delete from well_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
